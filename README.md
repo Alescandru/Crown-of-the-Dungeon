@@ -5,7 +5,7 @@ Dungeon Crown is a 2D dungeon adventure game made in Python using Pygame.
 ## Features
 
 - Class selection system
-- Multiple enemies with unique attack patterns
+- Multiple enemies with diffrent attack patterns
 - Undertale-style combat system
 - Collision map system
 - Large scrolling overworld map
