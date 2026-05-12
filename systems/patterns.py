@@ -85,7 +85,7 @@ def spawn_bat_bite(combat_system):
     vy=7
     start_x = base_x + x_offset
 
-    y = arena.top - 10
+    y = arena.top - 30
 
     block_size = 13
 
@@ -135,7 +135,7 @@ def spawn_crab_claw(combat_system, side="left"):
     if side == "right":
         start_x = arena.right
 
-    y = arena.top - 20
+    y = arena.top - 30
 
     block_size = 17
 
