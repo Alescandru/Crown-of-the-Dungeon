@@ -1,46 +1,176 @@
 import pygame
 import random
 
-ENEMY_STATS = {
-    "rat": {"hp": 5, "damage": 2},
-    "bat": {"hp": 10, "damage": 4},
-    "crab": {"hp": 7, "damage": 5}
-}
+from .attacks import *
 
+    # -------------------------
+    # RAT SCRATCH
+    # -------------------------
+def spawn_rat_scratch(combat_system,side):
 
-class Enemy(pygame.sprite.Sprite):
+    arena = combat_system.arena
 
-    def __init__(self, image_path, x, y, enemy_type):
+    vx=5
 
-        super().__init__()
+    start_x = arena.left - 100
 
-        self.type = enemy_type
+    if side == "right":
+        start_x = arena.right + 100
+        vx=-8
 
-        self.stats = ENEMY_STATS[enemy_type]
+    base_y = arena.top + 20
+    y_offset = random.randint(0, 250)
 
-        self.hp = self.stats["hp"]
-        self.damage = self.stats["damage"]
+    y = base_y + y_offset
 
-        self.shake_time = 0
-        self.hit_flash_time = 0
-        self.flash_duration = 120
+    block_size = 8
 
-        self.original_image = pygame.image.load(image_path).convert_alpha()
+    pattern = [
+        "00000000000000000011111100000000000",
+        "00000000000000000000011111110000000",
+        "00000000000000000000000000000000000",
+        "00000000000000000000000000000000000",
+        "00000000000000000000000000000000000",
+        "00000000000000000000000000000000000",
+        "00000000000000000000000000000000000",
+        "00000111111000000000000000000000000",
+        "00111111000000000000000011111000000",
+        "00000000000000000000000000011111000",
+        "00000000000000000000000000000000000",
+        "00000000000000000000000000000000000",
+        "00000000000000000000000000000000000",
+        "00000000000000000000000000000000000",
+        "00000000000000000000000000000000000",
+        "00000000000000000000000000000000000",
+        "00000001111110000000000000000000000",
+        "00000000011111100000000000000000000",
+        "00000000000000000000000000111111000",
+    ]
 
-        
-        if enemy_type == "rat":
-            world_size = (48, 48)
+    blocks = []
 
-        elif enemy_type in ["bat", "crab"]:
-            world_size = (96, 96)
+    for row_index, row in enumerate(pattern):
 
-        else:
-            world_size = (64, 64)
+        for col_index, cell in enumerate(row):
 
-        self.image_world = pygame.transform.smoothscale(
-            self.original_image,
-            world_size
-        )
+            if cell == "1":
 
-        self.image = self.image_world
-        self.rect = self.image.get_rect(center=(x, y))
+                x = start_x + col_index * block_size
+
+                if side == "right":
+                    x = start_x - col_index * block_size
+
+                rect = pygame.Rect(
+                    x,
+                    y + row_index * block_size,
+                    block_size,
+                    block_size
+                )
+
+                blocks.append(rect)
+
+    combat_system.attacks.append(
+        ShapeAttack(blocks, vx, 0)
+    )
+    # -------------------------
+    # BAT BITE
+    # -------------------------
+def spawn_bat_bite(combat_system):
+
+    arena = combat_system.arena
+
+    base_x = arena.width / 2
+    x_offset = random.randint(-100, 100)
+
+    vy=7
+    start_x = base_x + x_offset
+
+    y = arena.top - 30
+
+    block_size = 13
+
+    pattern = [
+        "000111111111111111100001111111111111111000",
+        "000111111111111000000000000111111111111000",
+        "000011111111110000000000000011111111110000",
+        "000001111111100000000000000001111111100000",
+        "000000111111000000000000000000111111000000",
+        "000000011110000000000000000000011110000000",
+        "000000001100000000000000000000001100000000",
+        "000000000100000000000000000000001000000000",
+    ]
+
+    blocks = []
+
+    for row_index, row in enumerate(pattern):
+
+        for col_index, cell in enumerate(row):
+
+            if cell == "1":
+
+                x = start_x + col_index * block_size
+
+                rect = pygame.Rect(
+                    x,
+                    y + row_index * block_size,
+                    block_size,
+                    block_size
+                )
+
+                blocks.append(rect)
+
+    combat_system.attacks.append(
+        ShapeAttack(blocks, 0, vy)
+    )
+    # -------------------------
+    # CRAB CLAW
+    # -------------------------
+def spawn_crab_claw(combat_system, side="left"):
+
+    arena = combat_system.arena
+
+    start_x = arena.left
+    vy = 8
+
+    if side == "right":
+        start_x = arena.right
+
+    y = arena.top - 30
+
+    block_size = 17
+
+    pattern = [
+        "00000011111111100000",
+        "00000111111111111000",
+        "00001110000000111110",
+        "11111000000000000111",
+        "11111000000000000000",
+        "11011111000001110000",
+        "00000011111111100000",
+    ]
+
+    blocks = []
+
+    for row_index, row in enumerate(pattern):
+
+        for col_index, cell in enumerate(row):
+
+            if cell == "1":
+
+                x = start_x + col_index * block_size
+
+                if side == "right":
+                    x = start_x - col_index * block_size
+
+                rect = pygame.Rect(
+                    x,
+                    y + row_index * block_size,
+                    block_size,
+                    block_size
+                )
+
+                blocks.append(rect)
+
+    combat_system.attacks.append(
+        ShapeAttack(blocks, 0, vy)
+    )
